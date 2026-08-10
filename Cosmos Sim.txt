@@ -1,5 +1,9 @@
 Cosmos simulation:
 
-http://localhost:5173 
+Make a beautiful simulation of the universe and solar system. should be sped up with adjustable time, realistic motion, orbits, stars. use threejs. Make the HUD well styled and conform to modern design principles.
 
 C:\Users\nicvo\Projects\GROK PROJECTS\universe-simulation
+
+http://localhost:5173 
+
+https://lapinrapid.github.io/Solar-System/

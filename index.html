@@ -125,12 +125,14 @@
             step="0.1"
             aria-valuetext="time scale"
           />
-          <div class="speed-presets">
-            <button type="button" class="preset" data-speed="0.01">Hour</button>
-            <button type="button" class="preset" data-speed="1">Day</button>
-            <button type="button" class="preset active" data-speed="30">Month</button>
-            <button type="button" class="preset" data-speed="365">Year</button>
-            <button type="button" class="preset" data-speed="3650">Decade</button>
+          <div class="speed-presets" role="group" aria-label="Time scale presets">
+            <button type="button" class="preset" data-speed="0.000012" title="~1 real second per second">Real</button>
+            <button type="button" class="preset" data-speed="0.0417" title="1 hour / second">Hour</button>
+            <button type="button" class="preset" data-speed="1" title="1 day / second">Day</button>
+            <button type="button" class="preset" data-speed="7" title="1 week / second">Week</button>
+            <button type="button" class="preset active" data-speed="30" title="~1 month / second">Month</button>
+            <button type="button" class="preset" data-speed="365" title="1 year / second">Year</button>
+            <button type="button" class="preset" data-speed="3650" title="1 decade / second">Decade</button>
           </div>
         </div>
 
@@ -159,10 +161,16 @@
       </div>
 
       <p class="hint">
-        Drag to orbit · Scroll to zoom · Click a planet or chip to focus ·
-        <kbd>Space</kbd> pause
+        Drag to orbit · Scroll to zoom · Click a body or chip to focus · Hover for labels ·
+        <kbd>Space</kbd> pause · Find Starman near Mars
       </p>
     </footer>
+
+    <!-- Floating body label (hover / selection) -->
+    <div id="float-label" class="float-label" aria-hidden="true">
+      <span class="float-label-name" id="float-label-name"></span>
+      <span class="float-label-type" id="float-label-type"></span>
+    </div>
 
     <div class="loading" id="loading">
       <div class="loading-inner">
