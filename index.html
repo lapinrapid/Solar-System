@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cosmos — Solar System Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="canvas-container"></div>
+
+    <!-- Ambient vignette -->
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- Top bar -->
+    <header class="hud-top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div class="brand-text">
+          <h1>Cosmos</h1>
+          <p>Solar System Simulation</p>
+        </div>
+      </div>
+      <div class="top-stats">
+        <div class="stat">
+          <span class="stat-label">Sim time</span>
+          <span class="stat-value" id="sim-date">Day 0 · Year 0</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-label">Speed</span>
+          <span class="stat-value" id="speed-display">1×</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Left panel: focus / info -->
+    <aside class="hud-panel hud-left" id="info-panel">
+      <div class="panel-header">
+        <span class="panel-eyebrow">Focus</span>
+        <h2 id="body-name">Sol</h2>
+      </div>
+      <p class="body-type" id="body-type">G-type main-sequence star</p>
+      <div class="info-grid" id="info-grid">
+        <div class="info-item">
+          <span class="info-label">Radius</span>
+          <span class="info-value" id="info-radius">695,700 km</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Day length</span>
+          <span class="info-value" id="info-day">25.4 d</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Orbital period</span>
+          <span class="info-value" id="info-period">—</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Distance</span>
+          <span class="info-value" id="info-distance">—</span>
+        </div>
+      </div>
+      <p class="body-blurb" id="body-blurb">
+        The Sun holds 99.8% of the solar system’s mass and drives the orbits of every planet.
+      </p>
+      <div class="chip-row" id="planet-chips"></div>
+    </aside>
+
+    <!-- Bottom controls -->
+    <footer class="hud-bottom">
+      <div class="control-card">
+        <div class="control-row transport">
+          <button type="button" class="btn icon-btn" id="btn-reset-view" title="Reset camera">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <path d="M3 12a9 9 0 1 0 3-6.7" />
+              <path d="M3 4v5h5" />
+            </svg>
+          </button>
+          <button type="button" class="btn icon-btn" id="btn-slower" title="Slower">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h3v12H6zm5 0l9 6-9 6V6z" transform="scale(-1,1) translate(-24,0)" />
+            </svg>
+          </button>
+          <button type="button" class="btn play-btn" id="btn-play" title="Pause / Play">
+            <svg id="icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="5" width="4" height="14" rx="1" />
+              <rect x="14" y="5" width="4" height="14" rx="1" />
+            </svg>
+            <svg id="icon-play" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7L8 5z" />
+            </svg>
+          </button>
+          <button type="button" class="btn icon-btn" id="btn-faster" title="Faster">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h3v12H6zm5 0l9 6-9 6V6z" />
+            </svg>
+          </button>
+          <button type="button" class="btn icon-btn" id="btn-realtime" title="1× real-time scale">1×</button>
+        </div>
+
+        <div class="control-row slider-row">
+          <label class="slider-label" for="time-scale">
+            <span>Time scale</span>
+            <span class="mono" id="time-scale-label">1 day / sec</span>
+          </label>
+          <input
+            type="range"
+            id="time-scale"
+            min="0"
+            max="100"
+            value="35"
+            step="0.1"
+            aria-valuetext="time scale"
+          />
+          <div class="speed-presets">
+            <button type="button" class="preset" data-speed="0.01">Hour</button>
+            <button type="button" class="preset" data-speed="1">Day</button>
+            <button type="button" class="preset active" data-speed="30">Month</button>
+            <button type="button" class="preset" data-speed="365">Year</button>
+            <button type="button" class="preset" data-speed="3650">Decade</button>
+          </div>
+        </div>
+
+        <div class="control-row toggles">
+          <label class="toggle">
+            <input type="checkbox" id="toggle-orbits" checked />
+            <span class="toggle-ui"></span>
+            <span>Orbits</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-labels" checked />
+            <span class="toggle-ui"></span>
+            <span>Labels</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-trails" />
+            <span class="toggle-ui"></span>
+            <span>Trails</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-asteroids" checked />
+            <span class="toggle-ui"></span>
+            <span>Belt</span>
+          </label>
+        </div>
+      </div>
+
+      <p class="hint">
+        Drag to orbit · Scroll to zoom · Click a planet or chip to focus ·
+        <kbd>Space</kbd> pause
+      </p>
+    </footer>
+
+    <div class="loading" id="loading">
+      <div class="loading-inner">
+        <div class="loading-orbit" aria-hidden="true">
+          <span></span>
+        </div>
+        <p>Assembling the cosmos…</p>
+      </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

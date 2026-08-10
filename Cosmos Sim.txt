@@ -1,0 +1,5 @@
+Cosmos simulation:
+
+http://localhost:5173 
+
+C:\Users\nicvo\Projects\GROK PROJECTS\universe-simulation
